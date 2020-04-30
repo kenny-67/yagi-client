@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from "react-router-dom";
 
 // console.log(window.location.hostname);
 
@@ -9,8 +10,11 @@ import React from "react";
 
 const API_URL_R = "https://server-yagi.herokuapp.com/register";
 
-const RegisterPage = (props) => {
-  const submit = (e) => {
+class RegisterPage extends React.Component {
+  state = {
+    registered: undefined,
+  };
+  submit = (e) => {
     e.preventDefault();
 
     const firstName = e.target.elements.firstName.value;
@@ -33,41 +37,52 @@ const RegisterPage = (props) => {
       headers: {
         "content-type": "application/json",
       },
-    });
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.Message == "Member Created") {
+          this.setState(() => ({
+            registered: true,
+          }));
+        }
+      });
   };
-  return (
-    <div className="body">
-      <p className="text-center">
-        To become a YAGI campus Coordinator, fill out the form
-      </p>
+  render() {
+    return (
+      <div className="body">
+        <p className="text-center">
+          To become a YAGI campus Coordinator, fill out the form
+        </p>
 
-      <div>
-        <form className="container form" onSubmit={submit}>
-          <div className="form-group">
-            <label>First Name</label>
-            <input type="text" name="firstName" className="form-control" />
-          </div>
-          <div className="form-group">
-            <label>Last Name</label>
-            <input type="text" name="lastName" className="form-control" />
-          </div>
-          <div className="form-group">
-            <label>Email</label>
-            <input type="email" name="email" className="form-control" />
-          </div>
-          <div className="form-group">
-            <label>Phone Number</label>
-            <input type="number" name="phoneNo" className="form-control" />
-          </div>
-          <div className="form-group">
-            <label>Bio</label>
-            <textarea name="bio" className="form-control" />
-          </div>
-          <button className="btn btn-primary">Submit</button>
-        </form>
+        <div>
+          <form className="container form" onSubmit={this.submit}>
+            <div className="form-group">
+              <label>First Name</label>
+              <input type="text" name="firstName" className="form-control" />
+            </div>
+            <div className="form-group">
+              <label>Last Name</label>
+              <input type="text" name="lastName" className="form-control" />
+            </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input type="email" name="email" className="form-control" />
+            </div>
+            <div className="form-group">
+              <label>Phone Number</label>
+              <input type="number" name="phoneNo" className="form-control" />
+            </div>
+            <div className="form-group">
+              <label>Bio</label>
+              <textarea name="bio" className="form-control" />
+            </div>
+            <button className="btn btn-primary">Submit</button>
+          </form>
+          {this.state.registered && <Redirect to="/" />}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 export default RegisterPage;
